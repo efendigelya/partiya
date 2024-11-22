@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+    
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:partiya"
+             x:Class="partiya.MainPage"
+             x:DataType="local:TodoListViewModel"
+             Title="Матрица Гослинга"
+             Background="Black">
+
+    <Grid RowDefinitions="Auto, *">
+        <Image Source="gos.jpg" 
+               Aspect="AspectFill" 
+               Opacity="0.3" 
+               HorizontalOptions="FillAndExpand" 
+               VerticalOptions="FillAndExpand"/>
+
+        <Grid Padding="10">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Поля для добавления заметок -->
+            <StackLayout Orientation="Horizontal" Padding="5" Grid.Row="0">
+                <Entry Text="{Binding NewItemText}" 
+                       x:Name="Entry" Placeholder="Введите заметку..." 
+                       HorizontalOptions="FillAndExpand"
+                       TextColor="White" 
+                       Background="#80000000"/>
+                <Button Margin="3" Text="+" FontAttributes="Bold"
+                        Command="{Binding AddCommand}" 
+                        CommandParameter="{Binding Source={x:Reference Entry}, Path=Text}"
+                        Background="{Binding SelectedColor}" 
+                        TextColor="White"/>
+                <Button Margin="3" Text="≡" FontAttributes="Bold"
+                            Clicked="OnColorCircleClicked"
+                            Background="{Binding SelectedColor}" 
+                            TextColor="White"/>
+            </StackLayout>
+
+            <!-- Секции с заметками -->
+            <Grid Grid.Row="1" Padding="5">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackLayout Grid.Column="0" Grid.Row="0" Margin="50,20,50,50" >
+                    <Label Text="Срочно и Важно" TextColor="White"  FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <ScrollView HeightRequest="300">
+                        <CollectionView ItemsSource="{Binding ImportantItems}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="local:TodoItem">
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="0">
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted}" VerticalOptions="Center" Color="White"/>
+                                            <Label 
+                                                Text="{Binding Text}" 
+                                                VerticalOptions="Center" 
+                                                TextColor="{Binding TextColor}" 
+                                                LineBreakMode="WordWrap" 
+                                                HorizontalOptions="StartAndExpand">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="TextColor" Value="Chartreuse" />
+                                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                            <Button Margin="-3" Text="x" FontAttributes="Bold" VerticalOptions="Center"  BackgroundColor="Black" TextColor="White"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:TodoListViewModel}}, Path=RemoveCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </StackLayout>
+
+                                        <Label Grid.Row="1" 
+                                               Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                               VerticalOptions="Start" 
+                                               TextColor="Gray" 
+                                               Margin="10,5,0,0"
+                                               HorizontalOptions="End"
+                                               FontSize="10"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+
+                <StackLayout Grid.Column="1" Grid.Row="0" Margin="50,20,50,50" >
+                    <Label Text="Не срочно, но важно" TextColor="White"  FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <ScrollView HeightRequest="300">
+                        <CollectionView ItemsSource="{Binding UrgentItems}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="local:TodoItem">
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="0">
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted}" VerticalOptions="Center" Color="White"/>
+                                            <Label 
+                                                Text="{Binding Text}" 
+                                                VerticalOptions="Center" 
+                                                TextColor="{Binding TextColor}" 
+                                                LineBreakMode="WordWrap" 
+                                                HorizontalOptions="StartAndExpand">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="TextColor" Value="Chartreuse" />
+                                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                            <Button Margin="-3" Text="x" FontAttributes="Bold" VerticalOptions="Center" BackgroundColor="Black" TextColor="White"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:TodoListViewModel}}, Path=RemoveCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </StackLayout>
+
+                                        <Label Grid.Row="1" 
+                                               Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                               VerticalOptions="Start" 
+                                               TextColor="Gray" 
+                                               Margin="10,5,0,0"
+                                               HorizontalOptions="End"
+                                               FontSize="10"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+
+                <StackLayout Grid.Column="0" Grid.Row="1" Margin="50,20,50,50">
+                    <Label Text="Срочно, но не важно" TextColor="White"  FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <ScrollView HeightRequest="300">
+                        <CollectionView ItemsSource="{Binding IdeaItems}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="local:TodoItem">
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="0">
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted}" VerticalOptions="Center" Color="White"/>
+                                            <Label 
+                                                Text="{Binding Text}" 
+                                                VerticalOptions="Center" 
+                                                TextColor="{Binding TextColor}" 
+                                                LineBreakMode="WordWrap" 
+                                                HorizontalOptions="StartAndExpand">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="TextColor" Value="Chartreuse" />
+                                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                            <Button Margin="-3" Text="x" FontAttributes="Bold" VerticalOptions="Center" BackgroundColor="Black" TextColor="White"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:TodoListViewModel}}, Path=RemoveCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </StackLayout>
+
+                                        <Label Grid.Row="1" 
+                                               Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                               VerticalOptions="Start" 
+                                               TextColor="Gray" 
+                                               Margin="10,5,0,0"
+                                               HorizontalOptions="End"
+                                               FontSize="10"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+
+                <StackLayout Grid.Column="1" Grid.Row="1" Margin="50,20,50,50">
+                    <Label Text="Не срочно и не важно"  TextColor="White" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <ScrollView HeightRequest="300">
+                        <CollectionView ItemsSource="{Binding NormalItems}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="local:TodoItem">
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackLayout Orientation="Horizontal" Grid.Row="0">
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted}" VerticalOptions="Center" Color="White"/>
+                                            <Label 
+                                                Text="{Binding Text}" 
+                                                VerticalOptions="Center" 
+                                                TextColor="{Binding TextColor}" 
+                                                LineBreakMode="WordWrap" 
+                                                HorizontalOptions="StartAndExpand">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="TextColor" Value="Chartreuse" />
+                                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                            <Button Margin="-3" Text="x" FontAttributes="Bold" VerticalOptions="Center" BackgroundColor="Black" TextColor="White"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:TodoListViewModel}}, Path=RemoveCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </StackLayout>
+
+                                        <Label Grid.Row="1" 
+                                               Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                               VerticalOptions="Start" 
+                                               TextColor="Gray" 
+                                               Margin="10,5,0,0"
+                                               HorizontalOptions="End"
+                                               FontSize="10"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </ScrollView>
+                </StackLayout>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>
